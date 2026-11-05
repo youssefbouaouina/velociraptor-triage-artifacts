@@ -74,21 +74,28 @@ def run_artifact(binary: Path, definitions: Path, name: str, timeout: int = 180)
     )
     rows = None
     parse_error = None
-    text = completed.stdout.strip()
+    # Velociraptor occasionally prints a log line to stdout before the JSON
+    # document, and a UTF-8 BOM can survive .strip(). Find the first JSON
+    # opener instead of assuming the output starts with one.
+    text = completed.stdout.lstrip("\ufeff \t\r\n")
     if text:
-        decoder = json.JSONDecoder()
-        rows = []
-        index = 0
-        try:
-            while index < len(text):
-                while index < len(text) and text[index].isspace():
-                    index += 1
-                if index >= len(text):
-                    break
-                value, index = decoder.raw_decode(text, index)
-                rows.extend(value if isinstance(value, list) else [value])
-        except json.JSONDecodeError as exc:
-            parse_error = str(exc)
+        starts = [index for index in (text.find("["), text.find("{")) if index >= 0]
+        if not starts:
+            parse_error = "no JSON document in stdout"
+        else:
+            decoder = json.JSONDecoder()
+            rows = []
+            index = min(starts)
+            try:
+                while index < len(text):
+                    while index < len(text) and text[index].isspace():
+                        index += 1
+                    if index >= len(text):
+                        break
+                    value, index = decoder.raw_decode(text, index)
+                    rows.extend(value if isinstance(value, list) else [value])
+            except json.JSONDecodeError as exc:
+                parse_error = str(exc)
     else:
         rows = []
     return completed, rows, parse_error
