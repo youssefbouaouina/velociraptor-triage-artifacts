@@ -68,7 +68,7 @@ CI tests is the same file a responder imports.
 Measured with Velociraptor **0.77.3** (the version pinned in `tests/fetch_velociraptor.py`).
 `python tests/run_tests.py` writes a JSON report with one row per artifact.
 
-### Local Windows 11 host (author's machine)
+### Local Windows 10 host (author's machine, build 19045, PowerShell 5.1)
 
 Run 2026-11-05, [`results/local-windows.json`](results/local-windows.json):
 
@@ -87,10 +87,28 @@ no Defender exclusion configured, so a zero is the expected answer, not a broken
 
 ### CI (Windows and Linux)
 
-The `test` matrix runs both operating systems on a fresh runner; the reports are uploaded as
-workflow artifacts (`triage-report-windows`, `triage-report-linux`). The exact counts from the
-latest run are recorded in [`results/`](results/) after each run so the README never quotes a
-number that cannot be reproduced.
+CI run #2, 2026-11-05, reports committed as
+[`results/ci-windows.json`](results/ci-windows.json) and
+[`results/ci-linux.json`](results/ci-linux.json).
+
+| Platform | Artifact | Positive test | Clean-runner baseline rows |
+|---|---|---|---|
+| `windows-latest` | `Persistence` | pass | 7 |
+| `windows-latest` | `UserWritableServices` | pass | 3 |
+| `windows-latest` | `ScheduledTasksEncoded` | pass | 0 |
+| `windows-latest` | `PrefetchLOLBins` | pass | 0 |
+| `windows-latest` | `DefenderExclusions` | pass | 2 |
+| `windows-latest` | `LogonScripts` | pass | 3 |
+| `windows-latest` | `PowerShellHistory` | pass | 0 |
+| `ubuntu-latest` | `CronPersistence` | pass | 20 |
+| `ubuntu-latest` | `SystemdTimers` | pass | 61 |
+| `ubuntu-latest` | `SSHAuthorizedKeys` | pass | 0 |
+| `ubuntu-latest` | `SuidBinaries` | pass | 1 |
+| `ubuntu-latest` | `SudoersChanges` | pass | 1 |
+
+**7/7 Windows and 5/5 Linux positive tests passed.** The baseline row counts differ from the
+local host on purpose: a fresh runner has a different set of services, cron files and Prefetch
+entries. That is exactly why the number is recorded per host instead of assumed.
 
 ## Run
 

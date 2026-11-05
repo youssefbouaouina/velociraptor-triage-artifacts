@@ -1,0 +1,49 @@
+{
+  "platform": "linux",
+  "velociraptor": "/home/runner/work/velociraptor-triage-artifacts/velociraptor-triage-artifacts/bin/velociraptor",
+  "results": [
+    {
+      "name": "Custom.Linux.Triage.CronPersistence",
+      "parameter": "CronGlobs",
+      "baseline_rows": 20,
+      "parameter_value": "/home/runner/work/_temp/velo-cron-0rlji6dc/*",
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Linux.Triage.SystemdTimers",
+      "parameter": "TimerGlobs",
+      "baseline_rows": 61,
+      "parameter_value": "/home/runner/work/_temp/velo-systemd-d6pmsiez/*.timer",
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Linux.Triage.SSHAuthorizedKeys",
+      "parameter": "KeysGlobs",
+      "baseline_rows": 0,
+      "parameter_value": "/home/runner/work/_temp/velo-ssh-2tbstj_d/authorized_keys",
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Linux.Triage.SuidBinaries",
+      "parameter": "Root",
+      "baseline_rows": 1,
+      "parameter_value": "/home/runner/work/_temp/velo-suid-vkz7kzp2",
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Linux.Triage.SudoersChanges",
+      "parameter": "SudoersGlobs",
+      "baseline_rows": 1,
+      "parameter_value": "/home/runner/work/_temp/velo-sudoers-v_xvafwf/*",
+      "status": "pass",
+      "positive_rows": 1
+    }
+  ],
+  "passed": 5,
+  "total": 5,
+  "failed": 0
+}

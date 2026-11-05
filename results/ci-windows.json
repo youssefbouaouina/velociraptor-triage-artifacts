@@ -1,0 +1,65 @@
+{
+  "platform": "windows",
+  "velociraptor": "D:\\a\\velociraptor-triage-artifacts\\velociraptor-triage-artifacts\\bin\\velociraptor.exe",
+  "results": [
+    {
+      "name": "Custom.Windows.Triage.Persistence",
+      "parameter": "RunKeys",
+      "baseline_rows": 7,
+      "parameter_value": "HKEY_CURRENT_USER\\Software\\VeloTriageTest\\Run\\*",
+      "status": "pass",
+      "positive_rows": 6
+    },
+    {
+      "name": "Custom.Windows.Triage.UserWritableServices",
+      "parameter": "ServicesRoot",
+      "baseline_rows": 3,
+      "parameter_value": "HKEY_CURRENT_USER\\Software\\VeloTriageTest\\Services\\*\\ImagePath",
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.ScheduledTasksEncoded",
+      "parameter": "TasksGlobs",
+      "baseline_rows": 0,
+      "parameter_value": "D:\\a\\_temp\\velo-tasks-41qdwry9\\*",
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.PrefetchLOLBins",
+      "parameter": "PrefetchGlobs",
+      "baseline_rows": 0,
+      "parameter_value": "D:\\a\\_temp\\velo-prefetch-7psy57t3\\*.pf",
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.DefenderExclusions",
+      "parameter": "ExclusionsKeys",
+      "baseline_rows": 2,
+      "parameter_value": "HKEY_CURRENT_USER\\Software\\VeloTriageTest\\Defender\\Exclusions\\Paths\\*",
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.LogonScripts",
+      "parameter": "WinlogonGlobs",
+      "baseline_rows": 3,
+      "parameter_value": "HKEY_CURRENT_USER\\Software\\VeloTriageTest\\Winlogon\\*",
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.PowerShellHistory",
+      "parameter": "HistoryGlobs",
+      "baseline_rows": 0,
+      "parameter_value": "D:\\a\\_temp\\velo-history-8dfx9i1m\\ConsoleHost_history.txt",
+      "status": "pass",
+      "positive_rows": 1
+    }
+  ],
+  "passed": 7,
+  "total": 7,
+  "failed": 0
+}
