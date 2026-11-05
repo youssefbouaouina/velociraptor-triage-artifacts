@@ -5,9 +5,7 @@ from __future__ import annotations
 
 import argparse
 import gzip
-import os
 import platform
-import shutil
 import stat
 import sys
 import urllib.request

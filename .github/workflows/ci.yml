@@ -45,6 +45,10 @@ jobs:
         run: python tests/fetch_velociraptor.py --dest bin --platform ${{ matrix.platform }}
       - name: Positive tests and clean-host baseline
         shell: bash
+        env:
+          # Git Bash on Windows otherwise exports TMPDIR=/tmp, and Python then
+          # creates fixtures on a POSIX-looking path Velociraptor cannot read.
+          TMPDIR: ${{ runner.temp }}
         run: >-
           python tests/run_tests.py
           --binary "${{ matrix.binary }}"

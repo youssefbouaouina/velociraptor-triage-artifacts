@@ -144,6 +144,7 @@ def main() -> int:
 
         # 2. Plant the fixture and run a copy of the artifact against it.
         parameter_value, cleanup = case["fixture"]()
+        record["parameter_value"] = parameter_value
         try:
             source = definitions / f"{name}.yaml"
             text = source.read_text(encoding="utf-8")
