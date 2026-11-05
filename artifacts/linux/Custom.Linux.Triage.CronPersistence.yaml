@@ -1,0 +1,21 @@
+name: Custom.Linux.Triage.CronPersistence
+description: |
+  Cron-based persistence in one view: the system crontab, the cron.d and
+  cron.{hourly,daily,weekly,monthly} directories, per-user crontabs and
+  rc.local. Attackers add a one-line entry that runs a downloader or a
+  reverse shell at a fixed interval; the artifact returns the file and its
+  full content so the line can be read in context.
+
+author: Youssef Bouaouina
+parameters:
+  - name: CronGlobs
+    description: Comma-separated globs for cron and rc.local files.
+    default: '/etc/crontab,/etc/cron.d/*,/etc/cron.hourly/*,/etc/cron.daily/*,/etc/cron.weekly/*,/etc/cron.monthly/*,/var/spool/cron/*,/var/spool/cron/crontabs/*,/etc/rc.local'
+
+sources:
+  - query: |
+      SELECT OSPath AS CronFile,
+             Mtime,
+             Size,
+             read_file(filename=OSPath) AS Content
+      FROM glob(globs=split(string=CronGlobs, sep=","))

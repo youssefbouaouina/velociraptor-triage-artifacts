@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install linter
+        run: pip install ruff==0.8.4
+      - name: Lint tests
+        run: ruff check tests
+
+  test:
+    name: test (${{ matrix.platform }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            binary: bin/velociraptor.exe
+          - os: ubuntu-latest
+            platform: linux
+            binary: bin/velociraptor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download pinned Velociraptor 0.77.3
+        run: python tests/fetch_velociraptor.py --dest bin --platform ${{ matrix.platform }}
+      - name: Positive tests and clean-host baseline
+        shell: bash
+        run: >-
+          python tests/run_tests.py
+          --binary "${{ matrix.binary }}"
+          --platform ${{ matrix.platform }}
+          --definitions artifacts/${{ matrix.platform }}
+          --report results/ci-${{ matrix.platform }}.json
+      - name: Upload measured report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-report-${{ matrix.platform }}
+          path: results/ci-${{ matrix.platform }}.json
+          if-no-files-found: warn
+          retention-days: 30

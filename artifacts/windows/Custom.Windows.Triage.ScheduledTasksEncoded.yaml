@@ -1,0 +1,24 @@
+name: Custom.Windows.Triage.ScheduledTasksEncoded
+description: |
+  Scheduled tasks whose action contains an encoded PowerShell command
+  (-EncodedCommand / -enc). Encoding is legitimate for some installers, so the
+  artifact returns the raw task XML and the task file path; the analyst decodes
+  the base64 before drawing a conclusion. It also flags tasks that call
+  powershell with -w hidden, which is common in commodity loaders.
+
+author: Youssef Bouaouina
+parameters:
+  - name: TasksGlobs
+    description: Comma-separated globs for the task XML files.
+    default: 'C:\Windows\System32\Tasks\**,C:\Windows\SysWOW64\Tasks\**'
+  - name: SuspiciousRegex
+    description: Case-insensitive regex applied to the task definition.
+    default: '(?i)(-enc|-encodedcommand|-w hidden|-windowstyle hidden)'
+
+sources:
+  - query: |
+      SELECT OSPath AS TaskFile,
+             Mtime,
+             read_file(filename=OSPath) AS Content
+      FROM glob(globs=split(string=TasksGlobs, sep=","))
+      WHERE Content =~ SuspiciousRegex

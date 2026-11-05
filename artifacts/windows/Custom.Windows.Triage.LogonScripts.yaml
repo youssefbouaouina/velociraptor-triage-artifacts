@@ -1,0 +1,38 @@
+name: Custom.Windows.Triage.LogonScripts
+description: |
+  Logon-time execution hooks that do not live in the Run keys: the Winlogon
+  Userinit and Shell values, AppInit_DLLs, and the per-user logon script
+  (Environment\UserInitMprLogonScript). These are small registry edits that
+  survive reboots and usually point at a binary or script outside Program Files.
+
+author: Youssef Bouaouina
+parameters:
+  - name: WinlogonGlobs
+    description: Comma-separated registry globs for the Winlogon key.
+    default: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\*,HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Winlogon\*'
+  - name: LogonScriptGlobs
+    description: Comma-separated registry globs for the logon script value.
+    default: 'HKEY_CURRENT_USER\Environment\*,HKEY_USERS\*\Environment\*'
+
+sources:
+  - name: Winlogon
+    query: |
+      SELECT "Winlogon" AS Source,
+             OSPath AS Path,
+             Name,
+             Data.value AS Command
+      FROM glob(globs=split(string=WinlogonGlobs, sep=","), accessor="registry")
+      WHERE Name = "Userinit"
+         OR Name = "Shell"
+         OR Name = "AppInit_DLLs"
+         OR Name = "Taskman"
+         OR Name = "GinaDLL"
+
+  - name: LogonScript
+    query: |
+      SELECT "LogonScript" AS Source,
+             OSPath AS Path,
+             Name,
+             Data.value AS Command
+      FROM glob(globs=split(string=LogonScriptGlobs, sep=","), accessor="registry")
+      WHERE Name = "UserInitMprLogonScript"

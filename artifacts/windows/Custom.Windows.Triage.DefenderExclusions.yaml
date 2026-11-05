@@ -1,0 +1,20 @@
+name: Custom.Windows.Triage.DefenderExclusions
+description: |
+  Microsoft Defender path, extension and process exclusions. An exclusion is a
+  deliberate blind spot: malware and some "legitimate" loaders add one before
+  dropping a payload. The artifact reads the policy and the live preference
+  keys, returns the excluded value and the key it came from, and does not
+  remove anything.
+
+author: Youssef Bouaouina
+parameters:
+  - name: ExclusionsKeys
+    description: Comma-separated registry globs for Defender exclusion values.
+    default: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths\*,HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Exclusions\Extensions\*,HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Exclusions\Processes\*,HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Exclusions\Paths\*,HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Exclusions\Extensions\*,HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Exclusions\Processes\*'
+
+sources:
+  - query: |
+      SELECT OSPath AS ExclusionKey,
+             Name,
+             Data.value AS Excluded
+      FROM glob(globs=split(string=ExclusionsKeys, sep=","), accessor="registry")

@@ -1,0 +1,20 @@
+name: Custom.Linux.Triage.SSHAuthorizedKeys
+description: |
+  Every authorized_keys file on the host, with its modification time and
+  content. A new key is a durable access path that does not need a password
+  and is not visible in the auth log. The artifact also covers the root and
+  system-profile locations that are easy to forget.
+
+author: Youssef Bouaouina
+parameters:
+  - name: KeysGlobs
+    description: Comma-separated globs for authorized_keys files.
+    default: '/root/.ssh/authorized_keys,/home/*/.ssh/authorized_keys,/etc/ssh/authorized_keys*,/var/lib/*/.ssh/authorized_keys'
+
+sources:
+  - query: |
+      SELECT OSPath AS AuthorizedKeysFile,
+             Mtime,
+             Size,
+             read_file(filename=OSPath) AS Content
+      FROM glob(globs=split(string=KeysGlobs, sep=","))

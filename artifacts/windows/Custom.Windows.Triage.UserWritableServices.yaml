@@ -1,0 +1,26 @@
+name: Custom.Windows.Triage.UserWritableServices
+description: |
+  Services whose ImagePath points into a directory a standard user can write to
+  (profile, ProgramData, Temp, Public, Recycle Bin). That is the classic
+  unquoted-path or weak-ACL privilege escalation: the attacker replaces the
+  binary and the service starts it as LocalSystem.
+
+  The regex is deliberately simple and case-insensitive. It is a triage lead,
+  not proof: read the ACL of the parent directory before calling it exploitable.
+
+author: Youssef Bouaouina
+parameters:
+  - name: ServicesRoot
+    description: Comma-separated registry globs pointing at service ImagePath values.
+    default: 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\*\ImagePath,HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\*\Parameters\ServiceDll'
+  - name: WritablePathRegex
+    description: Case-insensitive regex for user-writable locations.
+    default: '(?i)(\\Users\\|\\AppData\\|\\ProgramData\\|\\Temp\\|\\Public\\|\\Recycle)'
+
+sources:
+  - query: |
+      SELECT OSPath AS ServiceKey,
+             Name AS ValueName,
+             Data.value AS ImagePath
+      FROM glob(globs=split(string=ServicesRoot, sep=","), accessor="registry")
+      WHERE Data.value =~ WritablePathRegex

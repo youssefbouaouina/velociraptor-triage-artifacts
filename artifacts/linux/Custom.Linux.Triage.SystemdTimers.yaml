@@ -1,0 +1,21 @@
+name: Custom.Linux.Triage.SystemdTimers
+description: |
+  Systemd timer units and the service they trigger. A timer is a quieter
+  persistence mechanism than cron: it survives package updates, has no
+  readable crontab and is often overlooked in triage. The artifact returns
+  every timer unit's content, so OnCalendar and Unit= are visible next to the
+  file that defines them.
+
+author: Youssef Bouaouina
+parameters:
+  - name: TimerGlobs
+    description: Comma-separated globs for systemd timer units.
+    default: '/etc/systemd/system/*.timer,/usr/lib/systemd/system/*.timer,/lib/systemd/system/*.timer,/run/systemd/system/*.timer'
+
+sources:
+  - query: |
+      SELECT OSPath AS TimerFile,
+             Mtime,
+             Size,
+             read_file(filename=OSPath) AS Content
+      FROM glob(globs=split(string=TimerGlobs, sep=","))

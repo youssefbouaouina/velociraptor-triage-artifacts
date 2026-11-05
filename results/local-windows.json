@@ -1,0 +1,58 @@
+{
+  "platform": "windows",
+  "velociraptor": "C:\\Users\\wessi\\AppData\\Local\\Temp\\opencode\\velo\\velociraptor.exe",
+  "results": [
+    {
+      "name": "Custom.Windows.Triage.Persistence",
+      "parameter": "RunKeys",
+      "baseline_rows": 14,
+      "status": "pass",
+      "positive_rows": 5
+    },
+    {
+      "name": "Custom.Windows.Triage.UserWritableServices",
+      "parameter": "ServicesRoot",
+      "baseline_rows": 4,
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.ScheduledTasksEncoded",
+      "parameter": "TasksGlobs",
+      "baseline_rows": 0,
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.PrefetchLOLBins",
+      "parameter": "PrefetchGlobs",
+      "baseline_rows": 6,
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.DefenderExclusions",
+      "parameter": "ExclusionsKeys",
+      "baseline_rows": 0,
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.LogonScripts",
+      "parameter": "WinlogonGlobs",
+      "baseline_rows": 3,
+      "status": "pass",
+      "positive_rows": 1
+    },
+    {
+      "name": "Custom.Windows.Triage.PowerShellHistory",
+      "parameter": "HistoryGlobs",
+      "baseline_rows": 1,
+      "status": "pass",
+      "positive_rows": 1
+    }
+  ],
+  "passed": 7,
+  "total": 7,
+  "failed": 0
+}

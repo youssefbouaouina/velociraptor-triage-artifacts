@@ -1,0 +1,20 @@
+name: Custom.Linux.Triage.SudoersChanges
+description: |
+  The sudoers file and every drop-in under /etc/sudoers.d, with content and
+  modification time. A single added line such as `%users ALL=(ALL) NOPASSWD:
+  ALL` turns a normal account into root, and the change is easy to miss if
+  only login events are reviewed.
+
+author: Youssef Bouaouina
+parameters:
+  - name: SudoersGlobs
+    description: Comma-separated globs for sudoers files.
+    default: '/etc/sudoers,/etc/sudoers.d/*'
+
+sources:
+  - query: |
+      SELECT OSPath AS SudoersFile,
+             Mtime,
+             Size,
+             read_file(filename=OSPath) AS Content
+      FROM glob(globs=split(string=SudoersGlobs, sep=","))

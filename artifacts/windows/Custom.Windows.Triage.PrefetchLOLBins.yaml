@@ -1,0 +1,29 @@
+name: Custom.Windows.Triage.PrefetchLOLBins
+description: |
+  Prefetch files for living-off-the-land binaries executed in the last N days.
+  Prefetch only exists on Windows client editions with it enabled, so an empty
+  result means "not available", not "clean". The row gives the executable name,
+  the last execution time and how many times Windows recorded it.
+
+author: Youssef Bouaouina
+parameters:
+  - name: PrefetchGlobs
+    description: Comma-separated globs for Prefetch files.
+    default: 'C:\Windows\Prefetch\*.pf'
+  - name: Days
+    description: Only return executions newer than this many days.
+    type: int
+    default: 30
+  - name: LolbinRegex
+    description: Case-insensitive regex on the Prefetch file name.
+    default: '(?i)^(certutil|mshta|rundll32|regsvr32|wmic|bitsadmin|curl|msiexec|powershell|pwsh|cscript|wscript|installutil|regasm|regsvcs)\.exe-'
+
+sources:
+  - query: |
+      SELECT OSPath AS PrefetchFile,
+             Name AS Entry,
+             Mtime AS LastExecution,
+             Size
+      FROM glob(globs=split(string=PrefetchGlobs, sep=","))
+      WHERE Name =~ LolbinRegex
+        AND Mtime > now() - Days * 86400

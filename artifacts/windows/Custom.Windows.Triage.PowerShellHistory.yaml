@@ -1,0 +1,25 @@
+name: Custom.Windows.Triage.PowerShellHistory
+description: |
+  The PowerShell console history file, one row per profile that has one. It is
+  the fastest way to see what an interactive attacker ran, including commands
+  that were never written to the event log. The artifact returns the file
+  metadata and its content; it does not parse or judge the commands.
+
+author: Youssef Bouaouina
+parameters:
+  - name: HistoryGlobs
+    description: Comma-separated globs for PSReadLine console history files.
+    default: 'C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt,C:\Windows\System32\config\systemprofile\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt'
+  - name: MaxBytes
+    description: Do not read files larger than this many bytes.
+    type: int
+    default: 1048576
+
+sources:
+  - query: |
+      SELECT OSPath AS HistoryFile,
+             Mtime,
+             Size,
+             read_file(filename=OSPath) AS Content
+      FROM glob(globs=split(string=HistoryGlobs, sep=","))
+      WHERE Size < MaxBytes
